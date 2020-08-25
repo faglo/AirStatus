@@ -1,0 +1,4 @@
+pystray~=0.16.0
+bleak~=0.7.1
+Pillow~=7.2.0
+win10toast~=0.9
