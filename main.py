@@ -1,16 +1,11 @@
 from bleak import discover
-from PIL import Image
 from asyncio import new_event_loop, set_event_loop, get_event_loop
-from pystray import Icon, Menu, MenuItem as Item
-from multiprocessing import Process
 from time import sleep
 from binascii import hexlify
+from json import dumps
 
 # Configure update duration (update after n seconds)
-UPDATE_DURATION = 30
-# Configure battery level when you get toast notification of discharging
-LOW_LEVEL = 20
-
+UPDATE_DURATION = 10
 
 # Getting data with hex format
 async def get_device():
@@ -89,143 +84,14 @@ def get_data():
     )
 
 
-# Checking AirPods availability and create icon in tray
-def create_icon(status, left, right, case, model):
-    # Rewriting data dict because cant pass all dict with multiprocessing lib
-    data = dict(
-        status=status,
-        charge=dict(
-            left=left,
-            right=right,
-            case=case
-        ),
-        model=model
-    )
-    # Blank values
-    a_left = True
-    a_right = True
-    a_case = True
-    charges = dict(
-        left=-1,
-        right=-1,
-        case=-1
-    )
-
-    if data["status"] == 0:
-        # Setting false availability for all devices and setting icon path
-        a_left = False
-        a_right = False
-        a_case = False
-        image = "./icons/no.png"
-    else:
-        # Checking for availability and errors for connected devices
-        charges = data["charge"]
-        if charges["left"] == -1 or charges["left"] == 150:
-            a_left = False
-        if charges["right"] == -1 or charges["right"] == 150:
-            a_right = False
-        if charges["case"] == -1:
-            a_case = False
-
-    # Right click menu
-    menu = Menu(
-        Item(
-            text=data["model"],
-            action="",
-            enabled=False
-        ),
-        Item(
-            text="Left: {}%".format(charges["left"]),
-            action="",
-            enabled=False,
-            visible=a_left
-        ),
-        Item(
-            text="Right: {}%".format(charges["right"]),
-            action="",
-            enabled=False,
-            visible=a_right
-        ),
-        Item(
-            text="Case: {}%".format(charges["case"]),
-            action="",
-            enabled=False,
-            visible=a_case
-        )
-    )
-
-    # Selecting lowest charge level for comparing and icon select
-    if a_left and charges["left"] > charges["right"]:
-        lowest = charges["left"]
-    elif a_right and charges["right"] > charges["left"]:
-        lowest = charges["right"]
-    elif charges["right"] == charges["left"]:
-        lowest = charges["right"]
-    else:
-        lowest = -1
-
-    # Selecting icon for charge levels
-    if lowest == -1:
-        image = "./icons/no.png"
-    elif lowest < 20:
-        image = "./icons/empty.png"
-    elif lowest < 40:
-        image = "./icons/low.png"
-    elif lowest < 60:
-        image = "./icons/middle.png"
-    elif lowest < 80:
-        image = "./icons/much.png"
-    elif lowest < 100:
-        image = "./icons/full.png"
-    else:
-        image = "./icons/no.png"
-
-    # Creating icon
-    Icon(data["model"], Image.open(image), menu=menu).run()
-
 def run():
-    data = get_data()
-    connected = True
-    cache = None
-    cached_process = None
-
     while True:
+        data = get_data()
+
         if data["status"] == 1:
-            # Checking cache and current data for avoid Windows duplicate tray icon bug
-            if cache != data["charge"] or not connected:
-                # Flushing process(tray icon) and handling error that might be on start
-                try:
-                    cached_process.terminate()
-                except AttributeError:
-                    pass
-
-                # Starting new thread(process)
-                proc = Process(target=create_icon, args=(1,
-                                                         data["charge"]["left"],
-                                                         data["charge"]["right"],
-                                                         data["charge"]["case"],
-                                                         data["model"]))
-                proc.start()
-
-                # Setting cache vars
-                cached_process = proc
-                cache = data["charge"]
-
-        elif data["status"] == 0:
-            # Checking cache and current data for avoid Windows duplicate tray icon bug
-            if connected:
-                # Flushing process(tray icon) and handling error that might be on start
-                try:
-                    cached_process.terminate()
-                except AttributeError:
-                    pass
-                # Creating process and setting cache var
-                proc = Process(target=create_icon, args=(0, -1, -1, -1, data["model"]))
-                connected = False
-                proc.start()
+            print(dumps(data))
 
         sleep(UPDATE_DURATION)
-
 
 if __name__ == '__main__':
     run()
