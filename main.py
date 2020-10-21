@@ -4,6 +4,7 @@ from asyncio import new_event_loop, set_event_loop, get_event_loop
 from pystray import Icon, Menu, MenuItem as Item
 from multiprocessing import Process
 from time import sleep
+from binascii import hexlify
 
 # Configure update duration (update after n seconds)
 UPDATE_DURATION = 30
@@ -17,12 +18,12 @@ async def get_device():
     devices = await discover()
     for d in devices:
         # Checking for AirPods
-        if d.rssi >= -690 and 76 in d.metadata['manufacturer_data'] and len(
-                d.metadata['manufacturer_data'][76].hex()) == 54:
-            data = d.metadata['manufacturer_data'][76].hex()
-            return data
-        else:
-            return False
+        if d.rssi >= -690 and 76 in d.metadata['manufacturer_data']:
+            data_hex = hexlify(bytearray(d.metadata['manufacturer_data'][76]))
+            data_length = len(hexlify(bytearray(d.metadata['manufacturer_data'][76])))
+            if data_length == 54:
+                return data_hex
+    return False
 
 
 # Same as get_device() but it's standalone method instead of async
@@ -42,32 +43,32 @@ def get_data():
     if not raw:
         return dict(status=0, model="AirPods not found")
 
-    # On 7th position we can get AirPods model, Pro or standart
-    if raw[7] == 'e':
+    # On 7th position we can get AirPods model, Pro or standard
+    if chr(raw[7]) == 'e':
         model = " Pro"
     else:
         model = ""
 
     # Checking left AirPod for availability and storing charge in variable
     try:
-        left = int(raw[12]) * 10
+        left = int(chr(raw[12])) * 10
     except ValueError:
         left = -1
 
     # Checking right AirPod for availability and storing charge in variable
     try:
-        right = int(raw[13]) * 10
+        right = int(chr(raw[13])) * 10
     except ValueError:
         right = -1
 
     # Checking AirPods case for availability and storing charge in variable
     try:
-        case = int(raw[15]) * 10
+        case = int(chr(raw[15])) * 10
     except ValueError:
         case = -1
 
     # On 14th position we can get charge status of AirPods, I found it with some tests :)
-    charge_raw = raw[14]
+    charge_raw = chr(raw[14])
     if charge_raw == "a":
         charging = "one"
     elif charge_raw == "b":
