@@ -4,7 +4,6 @@ from asyncio import new_event_loop, set_event_loop, get_event_loop
 from pystray import Icon, Menu, MenuItem as Item
 from multiprocessing import Process
 from time import sleep
-from win10toast import ToastNotifier
 
 # Configure update duration (update after n seconds)
 UPDATE_DURATION = 30
@@ -183,13 +182,6 @@ def create_icon(status, left, right, case, model):
     # Creating icon
     Icon(data["model"], Image.open(image), menu=menu).run()
 
-
-# Simple method for notification show
-def low_level_notification(model, percent):
-    notifer = ToastNotifier()
-    notifer.show_toast(model, "Your battery is going low ({}%)".format(percent), "./icons/low_n.ico", 5, True)
-
-
 def run():
     data = get_data()
     connected = True
@@ -217,10 +209,6 @@ def run():
                 # Setting cache vars
                 cached_process = proc
                 cache = data["charge"]
-
-                # Checking for low level for notify show
-                if int(data["charge"]["left"]) <= LOW_LEVEL or int(data["charge"]["right"]) <= LOW_LEVEL:
-                    low_level_notification(data["model"], data["charge"]["right"])
 
         elif data["status"] == 0:
             # Checking cache and current data for avoid Windows duplicate tray icon bug
