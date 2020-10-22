@@ -4,7 +4,15 @@
 #### What is it?
 This is a Python 3.6 script, forked from [faglo/AirStatus](https://github.com/faglo/AirStatus) that allows you to check AirPods battery level from your terminal, as JSON output.
 
-### Example output:
+### Usage
+
+```
+python3 main.py [output_file]
+```
+
+Output will be stored in `output_file` if specified.
+
+#### Example output
 
 ```
 {"status": 1, "charge": {"left": 90, "right": 90, "case": 50}, "charging": "one", "model": "AirPods Pro"}
