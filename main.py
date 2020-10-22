@@ -3,6 +3,7 @@ from asyncio import new_event_loop, set_event_loop, get_event_loop
 from time import sleep
 from binascii import hexlify
 from json import dumps
+from sys import argv
 
 # Configure update duration (update after n seconds)
 UPDATE_DURATION = 10
@@ -85,11 +86,19 @@ def get_data():
 
 
 def run():
+    output_file = argv[-1]
+
     while True:
         data = get_data()
 
         if data["status"] == 1:
-            print(dumps(data))
+            json_data = dumps(data)
+            if len(argv) > 1:
+                f = open(output_file, "a")
+                f.write(json_data+"\n")
+                f.close()
+            else:
+                print(json_data)
 
         sleep(UPDATE_DURATION)
 
