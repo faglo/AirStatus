@@ -4,6 +4,7 @@ from time import sleep
 from binascii import hexlify
 from json import dumps
 from sys import argv
+from datetime import datetime
 
 # Configure update duration (update after n seconds)
 UPDATE_DURATION = 10
@@ -81,7 +82,8 @@ def get_data():
             case=case
         ),
         charging=charging,
-        model="AirPods"+model
+        model="AirPods"+model,
+        date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     )
 
 
