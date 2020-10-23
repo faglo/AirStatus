@@ -15,7 +15,7 @@ Output will be stored in `output_file` if specified.
 #### Example output
 
 ```
-{"status": 1, "charge": {"left": 90, "right": 90, "case": 50}, "charging": "one", "model": "AirPods Pro"}
+{"status": 1, "charge": {"left": 90, "right": 90, "case": 50}, "charging": "one", "model": "AirPods Pro", "date": "2020-10-23 09:10:11"}
 ```
 
 #### Can I customize it easily?
