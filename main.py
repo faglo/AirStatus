@@ -29,6 +29,7 @@ def get_data_hex():
     set_event_loop(new_loop)
     loop = get_event_loop()
     a = loop.run_until_complete(get_device())
+    loop.close()
     return a
 
 
