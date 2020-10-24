@@ -84,7 +84,8 @@ def get_data():
         ),
         charging=charging,
         model="AirPods"+model,
-        date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        date=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        raw=raw.decode("utf-8")
     )
 
 
