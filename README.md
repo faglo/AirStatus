@@ -27,6 +27,8 @@ Description=AirPods Battery Monitor
 
 [Service]
 ExecStart=/usr/bin/python3 /PATH/TO/AirStatus/main.py /tmp/airstatus.out
+Restart=always
+RestartSec=3
 
 [Install]
 WantedBy=default.target
