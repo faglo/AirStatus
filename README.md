@@ -15,7 +15,7 @@ Output will be stored in `output_file` if specified.
 #### Example output
 
 ```
-{"status": 1, "charge": {"left": 90, "right": 90, "case": 50}, "charging": "one", "model": "AirPods Pro", "date": "2020-10-23 09:10:11"}
+{"status": 1, "charge": {"left": 95, "right": 95, "case": -1}, "charging_left": false, "charging_right": false, "charging_case": false, "model": "AirPodsPro", "date": "2021-12-22 11:09:05"}
 ```
 
 ### Installing as a service

@@ -102,7 +102,6 @@ def get_data():
     charging_left:bool = (charging_status & (0b00000010 if flip else 0b00000001)) != 0
     charging_right:bool = (charging_status & (0b00000001 if flip else 0b00000010)) != 0
     charging_case:bool = (charging_status & 0b00000100) != 0
-    charging_single:bool = (charging_status & 0b00000001) != 0
 
     # Return result info in dict format
     return dict(
@@ -115,7 +114,6 @@ def get_data():
         charging_left=charging_left,
         charging_right=charging_right,
         charging_case=charging_case,
-        charging_single=charging_single,
         model=model,
         date=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         raw=raw.decode("utf-8")
@@ -124,7 +122,7 @@ def get_data():
 
 # Return if left and right is flipped in the data
 def is_flipped(raw):
-    return (int("" + chr(raw[10]),16) & 0x02) == 0
+    return (int("" + chr(raw[10]), 16) & 0x02) == 0
 
 
 def run():
