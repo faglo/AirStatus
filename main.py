@@ -6,6 +6,8 @@ from binascii import hexlify
 from json import dumps
 from sys import argv
 from datetime import datetime
+import sys
+import asyncio
 
 # Configure update duration (update after n seconds)
 UPDATE_DURATION = 1
@@ -55,11 +57,14 @@ async def get_device():
 
 # Same as get_device() but it's standalone method instead of async
 def get_data_hex():
-    new_loop = new_event_loop()
-    set_event_loop(new_loop)
-    loop = get_event_loop()
-    a = loop.run_until_complete(get_device())
-    loop.close()
+    if sys.version_info < (3, 7):
+        new_loop = new_event_loop()
+        set_event_loop(new_loop)
+        loop = get_event_loop()
+        a = loop.run_until_complete(get_device())
+        loop.close()
+    else: 
+        a = asyncio.run(get_device())
     return a
 
 
