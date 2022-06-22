@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from bleak import discover
 from asyncio import new_event_loop, set_event_loop, get_event_loop
 from time import sleep, time_ns
